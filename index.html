@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estoque de Produto</title>
+    <style>
+      label{display: inline-block;width: 80px;}
+      input,select{width: 120px;}
+    </style>
+</head>
+<body>
+    <label>ID:        </label><input id="ID"        type="text"><br><br>
+    <label>Descrição: </label><input id="Descricao" type="text"><br><br>
+    <label>Saldo:     </label><input id="Saldo"     type="text">
+    <hr>
+    <button id="Insbtn">INSERT</button>
+    <button id="Selbtn">SELECT</button>
+    <button id="Updbtn">UPDATE</button>
+    <button id="Delbtn">DELETE</button>
+
+  <!---------------IMPORTS + CONFIGURATION------------------------->
+
+    <script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+  import { getDatabase, ref, get, set, child, update, remove } 
+  from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyCxsUgZsxLHUkIebnsJU9-o5Vd7AxNG6S4",
+    authDomain: "weighty-legend-358317.firebaseapp.com",
+    projectId: "weighty-legend-358317",
+    storageBucket: "weighty-legend-358317.appspot.com",
+    messagingSenderId: "59680483689",
+    appId: "1:59680483689:web:d84cabb94692fc66f475f8"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase();
+
+  //------------------------Referencias------------------------------//
+
+  var id = document.getElementById("ID");
+  var descricao = document.getElementById("Descricao");
+  var saldo = document.getElementById("Saldo");
+
+  var insBtn = document.getElementById("Insbtn");
+  var selBtn = document.getElementById("Selbtn");
+  var updBtn = document.getElementById("Updbtn");
+  var delBtn = document.getElementById("Delbtn");
+
+
+
+  //-----Função de Inserção de Dados-------------------------------------//
+
+  function InsertData() {
+    set(ref(db,"SALDOPRODUTO/"+ id.value), {
+        ID:         id.value,
+        Descricao:  descricao.value,
+        Saldo:      saldo.value
+    })
+    .then(()=>{
+        alert("Saldo Inserido com Sucesso");
+    })
+    .catch((error)=>{
+        alert("Erro, Saldo não inserido"+error);
+    })
+  }
+
+  //-------------Função de SELECT---------------------------------------//
+
+  function SelectData(){
+    const dbref = ref(db);
+
+    get(child(dbref,"SALDOPRODUTO/"+ id.value)).then((snapshot)=>{
+      if(snapshot.exists()){
+        id.value = snapshot.val().ID;
+        descricao.value = snapshot.val().Descricao;
+        saldo.value = snapshot.val().Saldo;
+      }
+      else {
+        alert("Registro não encontrado!");
+      }
+    })
+    .catch((error)=>{
+        alert("Erro, Consulta não executada, "+error);
+    })
+  }
+
+  //-------------FUNÇÃO DE UPDATE----------------------//
+
+  function UpdateData(){
+    update(ref(db,"SALDOPRODUTO/"+ id.value),{
+        Descricao: descricao.value,
+        Saldo: saldo.value
+    })
+    .then(()=>{
+      alert("Registro atualizado!");
+    })
+    .catch((error)=>{
+        alert("Erro,  "+error);
+    });
+  }
+
+  //-------------FUNÇÃO DE DELETE----------------------//
+
+  function DeleteData(){
+    remove(ref(db,"SALDOPRODUTO/"+ id.value))
+    .then(()=>{
+      alert("Registro removido com sucesso!");
+    })
+    .catch((error)=>{
+        alert("Erro, Registro não deletado, "+error);
+    })
+  }
+
+  //-------------Eventos para o Botão-------------//
+  insBtn.addEventListener('click',InsertData);
+  selBtn.addEventListener('click',SelectData);
+  updBtn.addEventListener('click',UpdateData);
+  delBtn.addEventListener('click',DeleteData);
+
+</script>
+</body>
+</html>
